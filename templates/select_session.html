@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Class Session Details</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.75);
+            --accent-blue: #38bdf8;
+            --accent-green: #10b981;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --border-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 35px 40px;
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h2 {
+            color: var(--accent-blue);
+            font-size: 24px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            color: var(--text-sub);
+            font-size: 14px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            color: var(--text-main);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            background: #090d16;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 11px 14px;
+            color: var(--text-main);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+        }
+
+        .btn-submit {
+            grid-column: span 2;
+            margin-top: 10px;
+            background: linear-gradient(135deg, var(--accent-blue) 0%, #0284c7 100%);
+            color: #fff;
+            font-weight: bold;
+            font-size: 15px;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-submit:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h2>Class Session Details</h2>
+            <p>Select class metadata before opening the real-time attendance dashboard</p>
+        </div>
+
+        <form action="/select_session" method="POST" class="form-grid">
+            <div class="form-group">
+                <label for="semester">Semester</label>
+                <select name="semester" id="semester" required>
+                    <option value="Sem 1">Sem 1</option>
+                    <option value="Sem 2">Sem 2</option>
+                    <option value="Sem 3">Sem 3</option>
+                    <option value="Sem 4">Sem 4</option>
+                    <option value="Sem 5" selected>Sem 5</option>
+                    <option value="Sem 6">Sem 6</option>
+                    <option value="Sem 7">Sem 7</option>
+                    <option value="Sem 8">Sem 8</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="section">Section</label>
+                <select name="section" id="section" required>
+                    <option value="Section A" selected>Section A</option>
+                    <option value="Section B">Section B</option>
+                    <option value="Section C">Section C</option>
+                    <option value="Section D">Section D</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="year">Year of Study</label>
+                <select name="year" id="year" required>
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year" selected>3rd Year</option>
+                    <option value="4th Year">4th Year</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="batch">Batch / Academic Year</label>
+                <input type="text" name="batch" id="batch" value="2024-2028" placeholder="e.g. 2024-2028" required>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="course">Course / Branch</label>
+                <input type="text" name="course" id="course" value="B.Tech Computer Science & Engineering" placeholder="e.g. Computer Science & Engineering" required>
+            </div>
+
+            <div class="form-group">
+                <label for="session_date">Session Date</label>
+                <input type="date" name="session_date" id="session_date" value="{{ today_date }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="faculty_name">Faculty Name</label>
+                <input type="text" name="faculty_name" id="faculty_name" value="Dr. Ramesh Ponnala" placeholder="e.g. Dr. Ramesh Ponnala" required>
+            </div>
+
+            <button type="submit" class="btn-submit">Proceed to Attendance Dashboard ➔</button>
+        </form>
+    </div>
+
+</body>
+</html>

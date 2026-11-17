@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Face Recognition Attendance System - Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-image:
+                linear-gradient(
+                    rgba(0, 0, 0, 0.15),
+                    rgba(0, 0, 0, 0.20)
+                ),
+                url("{{ url_for('static', filename='campus.jpg') }}");
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #0f172a;
+            padding: 24px;
+        }
+
+        .header-nav {
+            max-width: 1280px;
+            margin: 0 auto 16px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 18px 28px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+            border-left: 6px solid #2563eb;
+        }
+
+        .header-title h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .header-title p {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-change-session {
+            background: #3b82f6;
+            color: white;
+            padding: 9px 16px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+
+        .btn-change-session:hover {
+            background: #2563eb;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            padding: 9px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+
+        .session-banner {
+            max-width: 1280px;
+            margin: 0 auto 24px auto;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px 24px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+            border-left: 6px solid #10b981;
+        }
+
+        .session-banner-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .session-banner-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            background: #f8fafc;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .session-item {
+            font-size: 13px;
+            color: #475569;
+        }
+
+        .session-item strong {
+            color: #0f172a;
+        }
+
+        .main-grid {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1.35fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 992px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .white-panel {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1e293b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 12px;
+            gap: 10px;
+        }
+
+        .video-wrapper {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #e2e8f0;
+            background: #000;
+        }
+
+        .video-wrapper img {
+            width: 100%;
+            display: block;
+        }
+
+        .btn-action {
+            margin-top: 16px;
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #10b981;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            text-align: center;
+            transition: background 0.2s;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-action:hover {
+            background: #059669;
+        }
+
+        .btn-clear {
+            background: #f87171;
+            color: white;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-clear:hover {
+            background: #ef4444;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        thead tr {
+            background: #f8fafc;
+            color: #475569;
+            font-weight: 700;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            white-space: nowrap;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #fdfdfd;
+        }
+
+        tbody tr:hover {
+            background: #f1f5f9;
+        }
+
+        .badge-present {
+            background: #10b981;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .empty-row {
+            text-align: center;
+            color: #94a3b8;
+            padding: 24px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+            .header-nav {
+                padding: 16px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .header-title h1 {
+                font-size: 19px;
+            }
+            .nav-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .panel-header {
+                flex-wrap: wrap;
+            }
+            .white-panel {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header-nav">
+        <div class="header-title">
+            <h1>AI Face Recognition Attendance System</h1>
+            <p>Faculty of Science & Technology | Real-Time Attendance Portal</p>
+        </div>
+
+        <div class="nav-actions">
+            <a href="/change_session" class="btn-change-session">✏️ Change Class Details</a>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
+    </div>
+
+    <div class="session-banner">
+        <div class="session-banner-title">
+            <span>📚 Active Class Session Metadata</span>
+        </div>
+        <div class="session-banner-grid">
+            <div class="session-item">
+                <strong>Course:</strong> {{ session_info.get('course', 'B.Tech CSE') }}
+            </div>
+            <div class="session-item">
+                <strong>Sem & Sec:</strong> {{ session_info.get('semester', 'Sem 5') }} - {{ session_info.get('section', 'Section A') }}
+            </div>
+            <div class="session-item">
+                <strong>Year:</strong> {{ session_info.get('year', '3rd Year') }}
+            </div>
+            <div class="session-item">
+                <strong>Batch:</strong> {{ session_info.get('batch', '2024-2028') }}
+            </div>
+            <div class="session-item">
+                <strong>Date:</strong> {{ session_info.get('session_date', '-') }}
+            </div>
+            <div class="session-item">
+                <strong>Faculty:</strong> {{ session_info.get('faculty_name', 'Dr. Ramesh Ponnala') }}
+            </div>
+        </div>
+    </div>
+
+    <div class="main-grid">
+
+        <div class="white-panel">
+            <div class="panel-header">
+                <span>📹 Webcam Recognition Stream</span>
+            </div>
+
+            <div class="video-wrapper">
+                <img src="{{ url_for('video_feed') }}" alt="Webcam Stream">
+            </div>
+
+            <a href="/download/attendance" class="btn-action">
+                📊 Download Attendance Log (.csv)
+            </a>
+        </div>
+
+        <div class="white-panel">
+            <div class="panel-header">
+                <span>📋 Live Attendance Log</span>
+
+                <form action="/clear_attendance"
+                      method="POST"
+                      onsubmit="return confirm('Are you sure you want to clear the entire attendance log?');">
+                    <button type="submit" class="btn-clear">
+                        🗑️ Clear Attendance Log
+                    </button>
+                </form>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Enrollment No</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Sem & Sec</th>
+                            <th>Course</th>
+                            <th>Faculty</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for row in records %}
+                        <tr>
+                            <td style="font-weight: 600; color: #0f172a;">
+                                {{ row.get('Name', '-') }}
+                            </td>
+                            <td style="color: #475569;">
+                                {{ row.get('Enrollment No', row.get('Enrollment Number', '-')) }}
+                            </td>
+                            <td style="color: #475569;">
+                                {{ row.get('Date', '-') }}
+                            </td>
+                            <td style="color: #475569;">
+                                {{ row.get('Time', '-') }}
+                            </td>
+                            <td style="color: #334155;">
+                                {{ row.get('Semester', 'Sem 5') }} ({{ row.get('Section', 'Sec A') }})
+                            </td>
+                            <td style="color: #334155;">
+                                {{ row.get('Course', 'B.Tech CSE') }}
+                            </td>
+                            <td style="color: #334155;">
+                                {{ row.get('Faculty', '-') }}
+                            </td>
+                            <td>
+                                <span class="badge-present">
+                                    {{ row.get('Status', 'Present') }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" class="empty-row">
+                                No attendance logged yet. Stand in front of camera to mark.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        setInterval(async () => {
+            try {
+                const response = await fetch('/api/records');
+                const records = await response.json();
+                const tbody = document.querySelector('tbody');
+                if (!tbody) return;
+
+                if (records.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="8" class="empty-row">No attendance logged yet. Stand in front of camera to mark.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = records.map(row => `
+                    <tr>
+                        <td style="font-weight: 600; color: #0f172a;">${row['Name'] || '-'}</td>
+                        <td style="color: #475569;">${row['Enrollment No'] || '-'}</td>
+                        <td style="color: #475569;">${row['Date'] || '-'}</td>
+                        <td style="color: #475569;">${row['Time'] || '-'}</td>
+                        <td style="color: #334155;">${row['Semester'] || '-'} (${row['Section'] || '-'})</td>
+                        <td style="color: #334155;">${row['Course'] || '-'}</td>
+                        <td style="color: #334155;">${row['Faculty'] || '-'}</td>
+                        <td><span class="badge-present">${row['Status'] || 'Present'}</span></td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error("Failed to fetch live records:", err);
+            }
+        }, 3000);
+    </script>
+
+</body>
+</html>
